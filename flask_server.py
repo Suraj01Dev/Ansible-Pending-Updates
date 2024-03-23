@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 data = {}
 
-@app.route('/put_example', methods=['PUT'])
+@app.route('/put_updates', methods=['PUT'])
 def handle_put_request():
     request_data = request.get_json()
 
