@@ -10,17 +10,16 @@ def get_command_updates_output(command):
     return updates_output
 
 
+ip_address=get_command_updates_output("hostname -I").decode().split()[0]
+cmd="apt list --upgradable 2> /dev/null| awk -F'/' '{print $1}' | tail -n +2"
 
-
-cmd="""apt list --upgradable 2> /dev/null| awk -F'/' '{print $1}' | tail -n +2"""
-
-output=get_command_updates_output(cmd).decode()
+output=get_command_updates_output(cmd).decode().strip()
 
 import requests
 url = 'http://192.168.122.221:5000/put_example'  # Modify this if your server is running on a different host or port
 
 # Define the data you want to send in JSON format
-data = {'key': 'updates', 'value': output}
+data = {'key': 'updates', 'value': ip_address+"\n"+output}
 
 # Send the PUT request
 response = requests.put(url, json=data)
