@@ -16,7 +16,7 @@ def send(host):
     cmd="apt list --upgradable 2> /dev/null| awk -F'/' '{print $1}' | tail -n +2"
     output=get_command_updates_output(cmd).decode().strip()
 
-    url = f'http://{host}:5000/put_example'  
+    url = f'http://{host}:5000/put_updates'  
 
     data = {'key': 'updates', 'value': ip_address+"\n"+output}
 
