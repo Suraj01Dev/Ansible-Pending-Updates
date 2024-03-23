@@ -2,7 +2,8 @@
  - name: "Updates check ansible playbook"
    hosts: all
    become: yes
-
+   vars:
+    server_ip: "192.168.122.221" 
    tasks:    
 
    - name: "Python3 Installation Check."
@@ -27,23 +28,23 @@
 
    - name: "Checking script file"
      stat: 
-      path: "/opt/scripts/ansible_updates/update_put.py"
+      path: "/opt/scripts/ansible_updates/send_pending_updates.py"
      register: script_file
 
    - name: "Downloading updates_put.py script"
      get_url:
-        url: "https://raw.githubusercontent.com/Suraj01Dev/Ansible_Updates/main/update_put.py"
+        url: "https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/send_pending_updates.py"
         dest: "/opt/scripts/ansible_updates"
         mode: 0744
      when: not script_file.stat.exists
       
    - name: "Checking script file"
      stat: 
-      path: "/opt/scripts/ansible_updates/update_put.py"
+      path: "/opt/scripts/ansible_updates/send_pending_updates.py"
      register: script_file
 
 
    - name: "Running the script"
-     command: "/opt/scripts/ansible_updates/update_put.py "
+     command: "/opt/scripts/ansible_updates/send_pending_updates.py --host {{ server_ip }}"
      when: script_file.stat.exists
 
