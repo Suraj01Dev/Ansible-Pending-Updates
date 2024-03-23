@@ -1,0 +1,49 @@
+---
+ - name: "Updates check ansible playbook"
+   hosts: all
+   become: yes
+
+   tasks:    
+
+   - name: "Python3 Installation Check."
+     command: "python3 --version"
+     register: python_version_output
+     ignore_errors: yes
+
+   - name: "Installing Python if not found (for Debian/Ubuntu)."
+     apt:
+        name: python3
+        state: present
+     when: "not python_version_output.stdout and ansible_facts['os_family'] == 'Debian'"
+
+   - name: "Checking script directory"
+     stat: 
+      path: "/opt/scripts/ansible_updates"
+     register: script_path
+
+   - name: "Creating Directory to run the script"
+     command: "mkdir -p /opt/scripts/ansible_updates"
+     when: not script_path.stat.exists
+
+   - name: "Checking script file"
+     stat: 
+      path: "/opt/scripts/ansible_updates/update_put.py"
+     register: script_file
+
+   - name: "Downloading updates_put.py script"
+     get_url:
+        url: "https://raw.githubusercontent.com/Suraj01Dev/Ansible_Updates/main/update_put.py"
+        dest: "/opt/scripts/ansible_updates"
+        mode: 0744
+     when: not script_file.stat.exists
+      
+   - name: "Checking script file"
+     stat: 
+      path: "/opt/scripts/ansible_updates/update_put.py"
+     register: script_file
+
+
+   - name: "Running the script"
+     command: "/opt/scripts/ansible_updates/update_put.py "
+     when: script_file.stat.exists
+
