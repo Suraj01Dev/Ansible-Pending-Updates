@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#! /bin/python3
 import subprocess
 
 
@@ -14,7 +14,7 @@ def get_command_updates_output(command):
 
 cmd="""apt list --upgradable 2> /dev/null| awk -F'/' '{print $1}' | tail -n +2"""
 
-output=str(get_command_updates_output(cmd))
+output=get_command_updates_output(cmd).decode()
 
 import requests
 url = 'http://192.168.122.221:5000/put_example'  # Modify this if your server is running on a different host or port
