@@ -1,7 +1,7 @@
 # Ansible Pending Updates 
 _Devops Portfolio Project 3_
 
-![image](https://github.com/Suraj01Dev/Ansible-Pending-Updates/assets/120789150/a6d0de1c-b8db-420f-b5b0-bf3bb81ba963)
+![image](https://github.com/Suraj01Dev/Ansible-Pending-Updates/assets/120789150/366d3aac-4468-4fbc-99e0-8568424a2f32)
 
 ## Introduction
 This project revolves around getting the list of all pending updates from multiple remote Linux servers and displaying all of them in a single dashboard. The tools used in this project are as follows,
