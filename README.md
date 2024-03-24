@@ -110,5 +110,22 @@ The Pending_Updates (Server: \<target server ip\>).json file created by the Flas
 Now comes the interesting part which is the ansible playbook. The role of  [ansible_pending_updates.yaml](https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/ansible_pending_updates.yaml) ansible-playbook is to remotely execute the Python Client in the various remote target servers.
 
 The ansible is built on the following steps:
-- 
+- Check for Python3 installation
+- Installs Python3 if not found
+- Checks for a directory "/opt/scripts/ansible_updates"
+- If not found creates the directory "/opt/scripts/ansible_updates"
+- Check for the file send_pending_updates.py under the directory "/opt/scripts/ansible_updates"
+- If not found downloads the file [send_pending_updates.py](https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/send_pending_updates.py) from the GitHub
+- Finally executes the Python Client **send_pending_updates.py**
+
+ Note: Before executing the ansible playbook make sure to enter the ip of the Dashboard server in the vars section of the yaml file.
+```yaml
+   vars:
+    server_ip: "192.168.122.221" 
+```
+
+To run the ansible playbook, use the below command
+```
+ansible-playbook ansible_pending_updates.yaml --user <username> -b -k -K
+```
 
