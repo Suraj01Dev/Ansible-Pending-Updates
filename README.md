@@ -127,6 +127,97 @@ The ansible is built on the following steps:
 
 To run the ansible playbook, use the below command
 ```
-ansible-playbook ansible_pending_updates.yaml --user <username> -b -k -K
+ansible-playbook ansible_pending_updates.yaml 
 ```
+
+#### Note:
+To avoid passwordless authentication in ansible follow the below 2 steps:
+- Passwordless SSH Login
+- Passwordless sudo access for ansible user
+
+#### Passwordless SSH Login
+To enable password-less login we have to create a public and private key in the ansible node and copy the public key to all the managed nodes.
+```
+ssh-keygen
+```
+The above command will create a public and private key under the `~/.ssh`  directory.
+To copy this public key to all the target nodes `ssh-copy-id` command has to be used.
+
+```
+ssh-copy-id -i ~/.ssh/id_rsa.pub ansible@target_server
+```
+
+
+#### Passwordless sudo access for ansible user
+
+To enable password less sudo access follow the below steps in the target node.
+1. Execute `visudo`
+2. Paste the below command at the end of the file.
+```
+ansible         ALL = (ALL) NOPASSWD: ALL
+```
+
+## Automating using Jenkins
+
+Now let's create a [Jenkinsfile](https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/Jenkinsfile) to automate the ansible-playbook.
+
+### Prerequisites:
+- Setting up Jenkins on a ubuntu sever ([link](https://phoenixnap.com/kb/install-jenkins-ubuntu))
+- Setting Ansible Master Server as a Jenkins Node ([link](https://devopscube.com/setup-slaves-on-jenkins-2/))
+
+### Working of the Jenkinsfile
+
+```
+pipeline {
+    agent {
+        label "AnsibleNode"
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+            cleanWs()
+            }
+        }
+        stage('Ansible Playbook Download') {
+            steps {
+                sh 'wget https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates-Jenkins/main/ansible_pending_updates.yaml'
+            }
+        }
+        stage('Execute Ansible Playbook') {
+            steps {
+                sh "ansible-playbook ansible_pending_updates.yaml"
+            }
+    }
+}
+}
+```
+The Jenkinsfile file logic follows the following steps:
+1. Cleans the workspace
+2. Downloads the `ansible_pending_updates.yaml` file from the repo
+3. Finally it executes the ansible playbook using the command ```ansible-playbook ansible_pending_updates.yaml```
+
+
+
+## Summary
+1. The project contains 3 servers
+   - Target server
+   - Ansible Master Server
+   - Output Server
+2. Download the below files into the Output Server.
+    ```bash
+    
+    wget https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/flask_server.py
+    wget https://raw.githubusercontent.com/Suraj01Dev/Ansible-Pending-Updates/main/pending_updates_dashboard.py
+    ```
+3. Open two terminal sessions and execute the below command to run the Flask Server and the Dashboard Server.
+    ```bash
+    python3 flask_server.py
+    ```
+
+    ```bash
+    streamlit run pending_updates_dashboard.py
+    ```
+4. Connect the Ansible Master Server with your Jenkins setup as a SSH agent.
+5. Run a Jenkins pipeline using this [repo](https://github.com/Suraj01Dev/Ansible-Pending-Updates) as a git SCM.
 
